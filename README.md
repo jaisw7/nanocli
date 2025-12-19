@@ -2,6 +2,8 @@
 
 A cli framework with the simplicity of argparse, the colors of rich, the config handling of Hydra, and without the complexity.
 
+![NanoCLI Demo](assets/demo.gif)
+
 ## Core Model
 
 ```text
