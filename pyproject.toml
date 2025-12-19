@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nanocli"
-version = "0.1.0"
+version = "0.1.1"
 description = "Recursive hierarchical CLI framework with typed configs and YAML synthesis"
 readme = "README.md"
 license = "MIT"
