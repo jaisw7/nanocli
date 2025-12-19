@@ -1,8 +1,16 @@
 # NanoCLI
 
+[![PyPI version](https://badge.fury.io/py/nanocli.svg)](https://pypi.org/project/nanocli/)
+
 A cli framework with the simplicity of argparse, the colors of rich, the config handling of Hydra, and without the complexity.
 
 ![NanoCLI Demo](assets/demo.gif)
+
+## Installation
+
+```bash
+pip install nanocli
+```
 
 ## Core Model
 
