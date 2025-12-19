@@ -402,8 +402,9 @@ class TestNanoCLI:
         def train(cfg: SimpleConfig):
             print(f"Training {cfg.name}")
 
+        # Global tree structure - train subtree will be extracted
         yaml_file = tmp_path / "config.yml"
-        yaml_file.write_text("name: from_yaml\ncount: 42")
+        yaml_file.write_text("train:\n  name: from_yaml\n  count: 42")
 
         old_stdout = sys.stdout
         sys.stdout = io.StringIO()
@@ -622,8 +623,9 @@ class TestPrintWithYaml:
         def train(cfg: SimpleConfig):
             pass
 
+        # Global tree structure
         yaml_file = tmp_path / "config.yml"
-        yaml_file.write_text("name: yaml_test\ncount: 99")
+        yaml_file.write_text("train:\n  name: yaml_test\n  count: 99")
 
         old_stdout = sys.stdout
         sys.stdout = io.StringIO()

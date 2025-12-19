@@ -197,9 +197,20 @@ class NanoCLI:
                     current._show_command_help(console, part, schema)
                     return
 
-                # Get cfg file
+                # Get cfg file - load global tree and extract subtree
                 cfg_file = flags["cfg"]
-                base = load_yaml(cfg_file) if cfg_file else None
+                base = None
+                if cfg_file:
+                    global_cfg = load_yaml(cfg_file)
+                    # Extract subtree based on consumed path
+                    base = global_cfg
+                    for path_key in consumed_path:
+                        if hasattr(base, path_key) or (isinstance(base, dict) and path_key in base):
+                            base = base[path_key]
+                        else:
+                            # Path doesn't exist in config, use None
+                            base = None
+                            break
 
                 # Compile config
                 if schema:
