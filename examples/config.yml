@@ -1,0 +1,10 @@
+# Example config for the demo app
+model:
+  type: resnet
+  layers: 50
+  hidden_dim: 512
+
+epochs: 100
+lr: 0.001
+batch_size: 32
+device: cuda
