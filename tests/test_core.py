@@ -662,3 +662,62 @@ class TestPrintWithYaml:
             sys.stdout = old_stdout
 
         assert "train:" in output or "data:" in output
+
+
+class TestErrorHandling:
+    """Tests for graceful error handling."""
+
+    def test_invalid_override_key_in_run(self):
+        """Test that invalid config keys show helpful error."""
+        from nanocli.config import ConfigError, compile_config
+
+        with pytest.raises(ConfigError, match="Invalid config key"):
+            compile_config(schema=SimpleConfig, overrides=["invalid_key=value"])
+
+    def test_invalid_nested_key(self):
+        """Test that invalid nested keys are caught."""
+        from nanocli.config import ConfigError, compile_config
+
+        with pytest.raises(ConfigError, match="Invalid config key"):
+            compile_config(schema=ParentConfig, overrides=["child.invalid=value"])
+
+    def test_run_with_invalid_key_exits(self):
+        """Test that run() exits gracefully with invalid key."""
+        with pytest.raises(SystemExit):
+            run(SimpleConfig, args=["invalid_key=value"])
+
+    def test_nanocli_command_with_invalid_key(self):
+        """Test NanoCLI command with invalid key shows error and help."""
+        app = NanoCLI()
+
+        @app.command()
+        def train(cfg: SimpleConfig):
+            pass
+
+        with pytest.raises(SystemExit):
+            old_stdout = sys.stdout
+            sys.stdout = io.StringIO()
+            try:
+                app(["train", "invalid_key=value"])
+            finally:
+                sys.stdout = old_stdout
+
+
+class TestConfigErrorMessages:
+    """Tests for config error message formatting."""
+
+    def test_parse_overrides_no_equals(self):
+        """Test that missing = raises ConfigError."""
+        from nanocli.config import ConfigError, parse_overrides
+
+        with pytest.raises(ConfigError, match="Invalid override"):
+            parse_overrides(["no_equals_sign"])
+
+    def test_config_error_message_has_key(self):
+        """Test that error message contains the invalid key."""
+        from nanocli.config import ConfigError, compile_config
+
+        try:
+            compile_config(schema=SimpleConfig, overrides=["typo_key=value"])
+        except ConfigError as e:
+            assert "typo_key" in str(e)

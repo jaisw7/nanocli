@@ -18,6 +18,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from nanocli.config import (
+    ConfigError,
     compile_config,
     get_schema_structure,
     load_yaml,
@@ -202,7 +203,13 @@ class NanoCLI:
 
                 # Compile config
                 if schema:
-                    config = compile_config(base=base, overrides=overrides, schema=schema)
+                    try:
+                        config = compile_config(base=base, overrides=overrides, schema=schema)
+                    except ConfigError as e:
+                        console.print(f"[red]Error:[/red] {e}")
+                        console.print()
+                        current._show_command_help(console, part, schema)
+                        sys.exit(1)
                 else:
                     config = None
 
@@ -525,7 +532,13 @@ def run(
     base = load_yaml(cfg_file) if cfg_file else None
 
     # Compile config
-    config = compile_config(base=base, overrides=overrides, schema=schema)
+    try:
+        config = compile_config(base=base, overrides=overrides, schema=schema)
+    except ConfigError as e:
+        console.print(f"[red]Error:[/red] {e}")
+        console.print()
+        _show_run_help(console, schema)
+        sys.exit(1)
 
     # Handle print
     if flags["print"] or flags["print_global"]:

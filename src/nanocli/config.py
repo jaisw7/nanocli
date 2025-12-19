@@ -254,7 +254,23 @@ def compile_config(
     # Apply overrides (tree rewrite)
     if overrides:
         override_cfg = parse_overrides(overrides)
-        cfg = OmegaConf.merge(cfg, override_cfg)
+        try:
+            cfg = OmegaConf.merge(cfg, override_cfg)
+        except Exception as e:
+            # Extract the key from OmegaConf error message
+            error_msg = str(e)
+            if "Key" in error_msg and "not in" in error_msg:
+                # Parse: Key 'typer' not in 'ModelConfig'
+                import re
+
+                match = re.search(r"Key '(\w+)' not in '(\w+)'", error_msg)
+                if match:
+                    key, cls = match.groups()
+                    raise ConfigError(
+                        f"Invalid config key '{key}' in '{cls}'. Check for typos in your overrides."
+                    ) from None
+            # Re-raise with friendlier message
+            raise ConfigError(f"Config error: {error_msg}") from None
 
     # Convert to typed object if schema provided
     if schema is not None:
