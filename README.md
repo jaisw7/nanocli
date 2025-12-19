@@ -12,14 +12,6 @@ A cli framework with the simplicity of argparse, the colors of rich, the config 
 pip install nanocli
 ```
 
-## Core Model
-
-```text
-CLI = YAML Tree
-├── commands (leaf nodes)
-└── groups (subtrees)
-```
-
 ## Quick Start
 
 ```python
@@ -53,10 +45,9 @@ python app.py train.epochs=200 -p
 
 # Print config: -p (local), -g (global from root)
 python app.py train -p
-python app.py data download -g
 
 # Load YAML config
-python app.py -c config.yml train
+python app.py -c examples/train_config.yml train
 
 # Help
 python app.py -h
@@ -81,8 +72,8 @@ def download(cfg: DownloadConfig):
 
 ```bash
 python app.py data download
-python app.py data download dataset=coco -p
-python app.py data download dataset=coco -g  # prints full tree
+python app.py data download path=/data -p
+python app.py data download -g  # prints full tree from root
 ```
 
 ## Flags
@@ -100,8 +91,6 @@ python app.py data download dataset=coco -g  # prints full tree
 make dev          # Install with dev deps
 make test         # Run tests
 make pre-commit   # Run all checks
-make lint-fix     # Fix lint issues
-make type-check   # Type check
 ```
 
 ## License
